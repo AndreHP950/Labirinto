@@ -3,7 +3,8 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public Rigidbody rb;
-    public float forceAmount = 1000f;
+    public float forceBase = 1000f; // força inicial
+    public float velocidadePorPonto = 10f; // quanto cada ponto aumenta a força
 
     void Start()
     {
@@ -12,13 +13,20 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.W))    
-            rb.AddForce(Vector3.forward * forceAmount * Time.deltaTime);
-        else if (Input.GetKey(KeyCode.S))
-            rb.AddForce(Vector3.back * forceAmount * Time.deltaTime);
-        else if(Input.GetKey(KeyCode.D)) 
-            rb.AddForce(Vector3.right * forceAmount * Time.deltaTime);
-        else if (Input.GetKey(KeyCode.A))
-            rb.AddForce(Vector3.left * forceAmount * Time.deltaTime);
+        float pontos = Interface.Instance != null ? Interface.Instance.GetPontos() : 0;
+        float forceAmount = forceBase + (pontos * velocidadePorPonto);
+
+        Vector3 direcao = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.W))
+            direcao += Vector3.forward;
+        if (Input.GetKey(KeyCode.S))
+            direcao += Vector3.back;
+        if (Input.GetKey(KeyCode.D))
+            direcao += Vector3.right;
+        if (Input.GetKey(KeyCode.A))
+            direcao += Vector3.left;
+
+        rb.AddForce(direcao.normalized * forceAmount * Time.deltaTime);
     }
 }
