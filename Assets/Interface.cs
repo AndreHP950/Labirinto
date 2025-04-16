@@ -8,8 +8,6 @@ public class Interface : MonoBehaviour
 
     [Header("Lobby (somente InitScene)")]
     public GameObject playButton;
-    public Transform cameraTargetPosition;
-    public float cameraZoomSpeed = 2f;
 
     [Header("Sistema de som")]
     public AudioSource audioSource;
@@ -22,7 +20,6 @@ public class Interface : MonoBehaviour
 
     private bool playPressed = false;
     private bool jaComecouJogo = false;
-    private bool isZooming = false;
 
     void Awake()
     {
@@ -45,38 +42,6 @@ public class Interface : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         HandleScene(scene.name);
-    }
-
-    void Update()
-    {
-        if (isZooming && cameraTargetPosition != null)
-        {
-            Transform cam = Camera.main.transform;
-
-            cam.position = Vector3.MoveTowards(
-                cam.position,
-                cameraTargetPosition.position,
-                Time.unscaledDeltaTime * cameraZoomSpeed
-            );
-
-            cam.rotation = Quaternion.RotateTowards(
-                cam.rotation,
-                cameraTargetPosition.rotation,
-                Time.unscaledDeltaTime * cameraZoomSpeed * 100f
-            );
-
-            float dist = Vector3.Distance(cam.position, cameraTargetPosition.position);
-            float rotDiff = Quaternion.Angle(cam.rotation, cameraTargetPosition.rotation);
-
-            if (dist < 0.05f && rotDiff < 1f)
-            {
-                cam.position = cameraTargetPosition.position;
-                cam.rotation = cameraTargetPosition.rotation;
-
-                isZooming = false;
-                Time.timeScale = 1f;
-            }
-        }
     }
 
     void HandleScene(string sceneName)
@@ -146,9 +111,8 @@ public class Interface : MonoBehaviour
             audioSource.Play();
         }
 
-        // Começa a animação de zoom
-        isZooming = true;
-        Time.timeScale = 0f;
+        // Inicia o jogo normalmente
+        Time.timeScale = 1f;
     }
 
     public bool JogoJaComecou()
